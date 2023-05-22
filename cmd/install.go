@@ -1,12 +1,18 @@
-o/*
+/*
 Copyright © 2023 Davi Seidel Brandão <daviseidel.brandao@gmail.com>
-
 */
 package cmd
 
 import (
+	//Standart Library
 	"fmt"
+	"io"
+	"net/http"
+	"os"
 
+	//Lib para parsear PKGBUILD
+
+	//Cobra para cli
 	"github.com/spf13/cobra"
 )
 
@@ -17,7 +23,65 @@ var installCmd = &cobra.Command{
 	Long: `Will install a package from the AUR in you system. The syntax is:
 gaur install [PACKAGE NAME]`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("install called")
+		//Criando as váriaves que vão se usadas mais pra fente
+		//Nome do pacote
+		var pkgName = ""
+		//Diretório /tmp
+		var tempPath = os.TempDir()
+		//Checando se há um argumento
+		if len(args) >= 1 && args[0] != "" {
+			//Capturando o nome do pacote
+			pkgName = args[0]
+		} else {
+			//Erro(observar padrão, vai se repetir)
+			fmt.Println("Error: no install arguments")
+			return
+		}
+		//Printando o pacote
+		fmt.Println("Package to be installed: " + pkgName)
+		//Capturando o scipt
+		URL := "https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=" + pkgName
+		fmt.Println(URL)
+		//Fazendo o request
+		response, err := http.Get(URL)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		//Checando o sucesso
+		if response.StatusCode == 200 {
+			fmt.Println("Package Found!")
+			//Se sim, crie o PKGBUILD no diretório temporário
+			out, err := os.Create(tempPath + "/PKGBUILD")
+			if err != nil {
+				fmt.Println(err)
+			}
+			defer out.Close()
+
+			//Copiar para o PKGBUILD vazio
+			_, err = io.Copy(out, response.Body)
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			fmt.Println(response.Body)
+
+			//Installar
+
+			//VER DPS, TALZES EU TIRE
+
+			//makepkgCmd := exec.Command("sh", "-c", "makepkg")
+
+			/*outCmd, err := makepkgCmd.CombinedOutput()
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			fmt.Println(string(outCmd))
+			*/
+
+		}
+
 	},
 }
 
