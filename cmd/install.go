@@ -9,6 +9,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"os/exec"
 
 	//Lib para parsear PKGBUILD
 
@@ -64,8 +65,18 @@ gaur install [PACKAGE NAME]`,
 				fmt.Println(err)
 			}
 
+			fmt.Println("Response body:")
 			fmt.Println(response.Body)
 
+			getSRCINFO := exec.Command("sh", "-c", "makepkg --printsrcinfo > .SRCINFO")
+			outSRCINFO, err := getSRCINFO.CombinedOutput()
+			if err != nil {
+				fmt.Println(err)
+			}
+			fmt.Println("SRCINFO")
+			fmt.Println(outSRCINFO)
+			fmt.Println("Temp path")
+			fmt.Println(tempPath)
 			//Installar
 
 			//VER DPS, TALZES EU TIRE
