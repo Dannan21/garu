@@ -39,7 +39,7 @@ gaur install [PACKAGE NAME]`,
 			return
 		}
 		//Printando o pacote
-		fmt.Println("Package to be installed: " + pkgName)
+		fmt.Println("==> Package to be installed: " + pkgName)
 		//Capturando o scipt
 		URL := "https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=" + pkgName
 		//Fazendo o request
@@ -50,7 +50,7 @@ gaur install [PACKAGE NAME]`,
 
 		//Checando o sucesso
 		if response.StatusCode == 200 {
-			fmt.Println("Package Found!")
+			fmt.Println("==> Package Found!")
 			//Se sim, crie o PKGBUILD no diretório temporário
 			out, err := os.Create(tempPath + "/PKGBUILD")
 			if err != nil {
@@ -65,35 +65,52 @@ gaur install [PACKAGE NAME]`,
 			}
 
 			_ = exec.Command("sh", "-c", "cd "+tempPath+" && makepkg --printsrcinfo > "+tempPath+"/.SRCINFO")
-			/*outSRCINFO, err := getSRCINFO.CombinedOutput()
+			//outSRCINFO, err := getSRCINFO.CombinedOutput()
 			if err != nil {
 				fmt.Println(err)
 			}
-			*/
-			//Installar
+
+			//Ver Dependencias (que dor de cabeça, ainda bem q passou)
 
 			pkgInfo, err := pkgbuild.ParseSRCINFO(tempPath + "/.SRCINFO")
 			if err != nil {
 				fmt.Println(err)
 			}
-			//pkgDeps:= pkgInfo.Depends
 
-			fmt.Println()
+			fmt.Println("==> Dependency list:")
 
-			fmt.Println("Installing Dependecies...")
+			pkgBultDeps := pkgInfo.BuildDepends()
+			for _, dep := range pkgBultDeps {
+				//depString := dep.String()
+				fmt.Println(dep.Name)
+				if dep.MinVer != nil {
+					fmt.Println(dep.MinVer.Version)
+				}
+			}
 
-			pkgInfo.BuildDepends()
-			//VER DPS, TALZES EU TIRE
+			makepkgCmd := exec.Command("sh", "-c", "cd "+tempPath+" && makepkg -i")
 
-			//makepkgCmd := exec.Command("sh", "-c", "makepkg")
-
-			/*outCmd, err := makepkgCmd.CombinedOutput()
+			pkgStdout, err := makepkgCmd.StdoutPipe()
 			if err != nil {
 				fmt.Println(err)
 			}
 
-			fmt.Println(string(outCmd))
-			*/
+			if err := makepkgCmd.Start(); err != nil {
+				fmt.Println("Erro no makepkg:", err)
+				return
+			}
+
+			go func() {
+				if _, err := io.Copy(os.Stdout, pkgStdout); err != nil {
+					fmt.Println("Erro no stdout:", err)
+				}
+			}()
+
+			if err := makepkgCmd.Wait(); err != nil {
+				fmt.Println(err)
+			} else {
+				fmt.Println("No errors!")
+			}
 
 		}
 
@@ -111,5 +128,5 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// installCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// installCmd.Flags().BoolP("nodeps", "n", false, "Ignore dependency list")
 }

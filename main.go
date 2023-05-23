@@ -1,6 +1,5 @@
 /*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-
+Copyright © 2023 Davi Seidel Brandão <daviseidel.brandao@gmail.com>
 */
 package main
 

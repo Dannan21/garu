@@ -1,6 +1,5 @@
 /*
 Copyright © 2023 Davi Seidel Brandão <daviseidel.brandao@gmail.com>
-
 */
 package cmd
 
@@ -10,13 +9,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-
-
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "gaur",
+	Use:   "garu",
 	Short: "Yet anothe AUR helper, written in go.",
-	Long: `Yet another CLI AUR helper, written in go and cobra/viper`,
+	Long: `Garu Assists Repository Users. 
+Yet another AUR helper, written in go and cobra/viper`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
@@ -42,5 +40,3 @@ func init() {
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
-
-
