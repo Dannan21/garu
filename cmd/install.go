@@ -12,7 +12,7 @@ import (
 	"os/exec"
 
 	//Lib para parsear PKGBUILD
-
+	pkgbuild "github.com/mikkeloscar/gopkgbuild"
 	//Cobra para cli
 	"github.com/spf13/cobra"
 )
@@ -42,7 +42,6 @@ gaur install [PACKAGE NAME]`,
 		fmt.Println("Package to be installed: " + pkgName)
 		//Capturando o scipt
 		URL := "https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=" + pkgName
-		fmt.Println(URL)
 		//Fazendo o request
 		response, err := http.Get(URL)
 		if err != nil {
@@ -65,20 +64,25 @@ gaur install [PACKAGE NAME]`,
 				fmt.Println(err)
 			}
 
-			fmt.Println("Response body:")
-			fmt.Println(response.Body)
-
-			getSRCINFO := exec.Command("sh", "-c", "makepkg --printsrcinfo > .SRCINFO")
-			outSRCINFO, err := getSRCINFO.CombinedOutput()
+			_ = exec.Command("sh", "-c", "cd "+tempPath+" && makepkg --printsrcinfo > "+tempPath+"/.SRCINFO")
+			/*outSRCINFO, err := getSRCINFO.CombinedOutput()
 			if err != nil {
 				fmt.Println(err)
 			}
-			fmt.Println("SRCINFO")
-			fmt.Println(outSRCINFO)
-			fmt.Println("Temp path")
-			fmt.Println(tempPath)
+			*/
 			//Installar
 
+			pkgInfo, err := pkgbuild.ParseSRCINFO(tempPath + "/.SRCINFO")
+			if err != nil {
+				fmt.Println(err)
+			}
+			//pkgDeps:= pkgInfo.Depends
+
+			fmt.Println()
+
+			fmt.Println("Installing Dependecies...")
+
+			pkgInfo.BuildDepends()
 			//VER DPS, TALZES EU TIRE
 
 			//makepkgCmd := exec.Command("sh", "-c", "makepkg")
