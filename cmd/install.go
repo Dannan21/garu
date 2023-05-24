@@ -12,12 +12,13 @@ import (
 	"os/exec"
 
 	//Lib para parsear PKGBUILD
-	pkgbuild "github.com/mikkeloscar/gopkgbuild"
+
 	//Cobra para cli
 	"github.com/spf13/cobra"
 )
 
 // installCmd represents the install command
+
 var installCmd = &cobra.Command{
 	Use:   "install",
 	Short: "Installs an AUR package",
@@ -71,33 +72,29 @@ gaur install [PACKAGE NAME]`,
 			}
 
 			//Ver Dependencias (que dor de cabeça, ainda bem q passou)
-
-			pkgInfo, err := pkgbuild.ParseSRCINFO(tempPath + "/.SRCINFO")
-			if err != nil {
-				fmt.Println(err)
-			}
-
-			fmt.Println("==> Dependency list:")
-
-			pkgBultDeps := pkgInfo.BuildDepends()
-			for _, dep := range pkgBultDeps {
-				//depString := dep.String()
-				fmt.Println(dep.Name)
-				if dep.MinVer != nil {
-					fmt.Println(dep.MinVer.Version)
+			/*
+				pkgInfo, err := pkgbuild.ParseSRCINFO(tempPath + "/.SRCINFO")
+				if err != nil {
+					fmt.Println(err)
 				}
-			}
 
-			makepkgCmd := exec.Command("sh", "-c", "cd "+tempPath+" && makepkg -i")
+					fmt.Println("==> Dependency list:")
+
+					pkgBultDeps := pkgInfo.BuildDepends()
+
+					for _, dep := range pkgBultDeps {
+						//depString := dep.String()
+						fmt.Println(dep.Name)
+						if dep.MinVer != nil {
+							fmt.Println(dep.MinVer.Version)
+						}
+					}
+			*/
+			makepkgCmd := exec.Command("sh", "-c", "cd "+tempPath+" && makepkg -i --noconfirm")
 
 			pkgStdout, err := makepkgCmd.StdoutPipe()
 			if err != nil {
 				fmt.Println(err)
-			}
-
-			if err := makepkgCmd.Start(); err != nil {
-				fmt.Println("Erro no makepkg:", err)
-				return
 			}
 
 			go func() {
@@ -106,12 +103,31 @@ gaur install [PACKAGE NAME]`,
 				}
 			}()
 
+			stderr, err := makepkgCmd.StderrPipe()
+			if err != nil {
+				fmt.Println("Error creating stderr pipe:", err)
+				return
+			}
+
+			go func() {
+				if _, err := io.Copy(os.Stderr, stderr); err != nil {
+					fmt.Println("Error copying stderr:", err)
+				}
+			}()
+
+			if err := makepkgCmd.Start(); err != nil {
+				fmt.Println("Erro no makepkg:", err)
+				return
+			}
+
 			if err := makepkgCmd.Wait(); err != nil {
 				fmt.Println(err)
 			} else {
 				fmt.Println("No errors!")
 			}
 
+		} else {
+			fmt.Println("==> Package Not Found")
 		}
 
 	},

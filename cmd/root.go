@@ -12,7 +12,7 @@ import (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "garu",
-	Short: "Yet anothe AUR helper, written in go.",
+	Short: "Garu Assists Repository Users.",
 	Long: `Garu Assists Repository Users. 
 Yet another AUR helper, written in go and cobra/viper`,
 	// Uncomment the following line if your bare application
