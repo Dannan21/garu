@@ -123,7 +123,7 @@ gaur install [PACKAGE NAME]`,
 			if err := makepkgCmd.Wait(); err != nil {
 				fmt.Println(err)
 			} else {
-				fmt.Println("No errors!")
+				fmt.Println("==> Package Installed")
 			}
 
 		} else {
