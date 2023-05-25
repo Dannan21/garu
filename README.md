@@ -25,7 +25,7 @@ Garu provides a set of commands to manage AUR packages. Some common commands inc
 
 - `garu install <package_name>`: Install an AUR package.
 - `garu update`: Synchronize and upgrade all AUR packages.
-- `garu remove`: Remove an AUR package and its dependencies.
+- `garu remove <package name>`: Remove an AUR package and its dependencies.
 
 ## Contributing
 
