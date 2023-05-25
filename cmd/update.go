@@ -57,6 +57,8 @@ to quickly create a Cobra application.`,
 				}
 				_ = exec.Command("sh", "-c", "cd "+tempPath+" && makepkg --printsrcinfo > "+tempPath+"/.SRCINFO")
 				//outSRCINFO, err := getSRCINFO.CombinedOutput()
+				//Teste git
+
 				if err != nil {
 					fmt.Println(err)
 				}
