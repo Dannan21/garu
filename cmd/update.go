@@ -30,10 +30,16 @@ gaur update`,
 		}
 
 		packages := strings.Split(strings.TrimSpace(string(output)), "\n")
-		for i, pkg := range packages {
+		for _, pkg := range packages {
 			//packages[i] = strings.Split(pkg, " ")[0]
-			fmt.Println(pkg, i)
-			URL := "https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=" + pkg
+			//fmt.Println(pkg, i)
+			var pkgName = ""
+			parts := strings.Fields(pkg)
+			if len(parts) > 0 {
+				pkgName = parts[0]
+				fmt.Println(pkgName) // Output: Hello
+			}
+			URL := "https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=" + pkgName
 			response, err := http.Get(URL)
 			if err != nil {
 				fmt.Println(err)
@@ -52,7 +58,6 @@ gaur update`,
 				}
 				_ = exec.Command("sh", "-c", "cd "+tempPath+" && makepkg --printsrcinfo > "+tempPath+"/.SRCINFO")
 				//outSRCINFO, err := getSRCINFO.CombinedOutput()
-				//Teste gitname
 
 				if err != nil {
 					fmt.Println(err)
