@@ -21,7 +21,6 @@ var updateCmd = &cobra.Command{
 	Long: `gets all AUR packages to the latest version. The syntax is:
 gaur update`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("update called")
 		var tempPath = os.TempDir()
 
 		command := exec.Command("pacman", "-Qm")
