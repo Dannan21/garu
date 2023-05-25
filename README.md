@@ -12,7 +12,7 @@ To install Garu, you can clone the AUR package using git. Here are the steps:
 ```
 git clone https://aur.archlinux.org/garu.git
 ```
-3. Run makepkg
+3. And run makepkg
 ```
 makepkg -si
 ```
